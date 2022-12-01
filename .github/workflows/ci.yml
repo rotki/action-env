@@ -1,0 +1,32 @@
+name: 'Build'
+on: # rebuild any PRs and main branch changes
+  pull_request:
+  push:
+    branches:
+      - main
+      - 'releases/*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: pnpm
+      - run: pnpm install
+      - run: pnpm run all
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run
+        uses: ./
+        id: test
+        with:
+          env_file: .github/.env
+      - name: Echo plugin output
+        run: | 
+          echo "EXAMPLE: $EXAMPLE"        

@@ -1,0 +1,10 @@
+name: '@rotki/action-env'
+description: 'Loads environment variables for a job from a file'
+author: 'Rotki Solutions GmbH'
+inputs:
+  env_file:
+    required: true
+    description: 'The path to the environment file where the variables will be loaded from'
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
