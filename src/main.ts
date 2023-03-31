@@ -1,27 +1,29 @@
-import * as core from '@actions/core'
-import {checkIfFileExists, loadEnv} from './file'
+import * as core from '@actions/core';
+import { checkIfFileExists, loadEnv } from './file';
 
 async function run(): Promise<void> {
   try {
-    const envFile: string = core.getInput('env_file')
-    core.info(`Using ${envFile} to load variables`)
+    const envFile: string = core.getInput('env_file');
+    core.info(`Using ${envFile} to load variables`);
 
     if (!checkIfFileExists(envFile)) {
-      return
+      return;
     }
 
-    const env = loadEnv(envFile)
+    const env = loadEnv(envFile);
     if (!env) {
-      core.setFailed('Nothing loaded from the envFile')
-      return
+      core.setFailed('Nothing loaded from the envFile');
+      return;
     }
 
     for (const [envVar, varValue] of Object.entries(env)) {
-      core.exportVariable(envVar, varValue)
+      core.exportVariable(envVar, varValue);
     }
   } catch (error) {
-    if (error instanceof Error) core.setFailed(error.message)
+    if (error instanceof Error) {
+      core.setFailed(error.message);
+    }
   }
 }
 
-run()
+run();
