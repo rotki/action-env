@@ -34,7 +34,7 @@
   "devDependencies": {
     "@rotki/eslint-config": "1.1.1",
     "@jest/globals": "29.6.4",
-    "@types/node": "16.18.23",
+    "@types/node": "20.9.2",
     "@vercel/ncc": "0.36.1",
     "bumpp": "9.2.0",
     "eslint": "8.48.0",
@@ -47,7 +47,7 @@
     "typescript": "5.1.6"
   },
   "engines": {
-    "node": ">=16 <17",
+    "node": ">=20 <21",
     "pnpm": ">=8 <9"
   }
 }
