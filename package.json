@@ -1,6 +1,6 @@
 {
   "name": "@rotki/action-env",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "private": true,
   "description": "Loads environment variables from a .env file",
   "main": "lib/main.js",
