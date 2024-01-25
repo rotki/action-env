@@ -1,7 +1,7 @@
 import * as process from 'process';
 import * as cp from 'child_process';
 import * as path from 'path';
-import { expect, test } from '@jest/globals';
+import { expect, test } from 'vitest';
 import { loadEnv } from '../src/file';
 
 test('loads from env file if the file exists', async () => {

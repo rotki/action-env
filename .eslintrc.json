@@ -1,5 +1,4 @@
 {
-  "plugins": ["jest"],
   "extends": ["plugin:github/recommended", "@rotki"],
   "rules": {
     "i18n-text/no-en": "off",
@@ -7,7 +6,6 @@
   },
   "env": {
     "node": true,
-    "es6": true,
-    "jest/globals": true
+    "es6": true
   }
 }
