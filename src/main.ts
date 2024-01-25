@@ -1,14 +1,13 @@
 import * as core from '@actions/core';
 import { checkIfFileExists, loadEnv } from './file';
 
-async function run(): Promise<void> {
+function run(): void {
   try {
     const envFile: string = core.getInput('env_file');
     core.info(`Using ${envFile} to load variables`);
 
-    if (!checkIfFileExists(envFile)) {
+    if (!checkIfFileExists(envFile))
       return;
-    }
 
     const env = loadEnv(envFile);
     if (!env) {
@@ -16,13 +15,12 @@ async function run(): Promise<void> {
       return;
     }
 
-    for (const [envVar, varValue] of Object.entries(env)) {
+    for (const [envVar, varValue] of Object.entries(env))
       core.exportVariable(envVar, varValue);
-    }
-  } catch (error) {
-    if (error instanceof Error) {
+  }
+  catch (error) {
+    if (error instanceof Error)
       core.setFailed(error.message);
-    }
   }
 }
 

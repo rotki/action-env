@@ -1,5 +1,5 @@
-name: 'Build'
-on: # rebuild any PRs and main branch changes
+name: Build
+on:
   pull_request:
   push:
     branches:
@@ -58,5 +58,5 @@ jobs:
           env_file: .github/.env
 
       - name: Echo plugin output
-        run: | 
-          echo "EXAMPLE: $EXAMPLE"        
+        run: |
+          echo "EXAMPLE: $EXAMPLE"

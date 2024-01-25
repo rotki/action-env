@@ -34,18 +34,18 @@ exports.loadEnv = exports.checkIfFileExists = void 0;
 const fs = __importStar(__nccwpck_require__(7561));
 const core = __importStar(__nccwpck_require__(9093));
 const dotenv_1 = __nccwpck_require__(3817);
-const checkIfFileExists = (filePath) => {
+function checkIfFileExists(filePath) {
     if (!fs.existsSync(filePath)) {
         core.setFailed('Invalid path');
         return false;
     }
     return true;
-};
+}
 exports.checkIfFileExists = checkIfFileExists;
-const loadEnv = (filePath) => {
+function loadEnv(filePath) {
     const output = (0, dotenv_1.config)({ path: filePath });
     return output.parsed;
-};
+}
 exports.loadEnv = loadEnv;
 
 
@@ -79,41 +79,27 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(9093));
 const file_1 = __nccwpck_require__(1373);
 function run() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const envFile = core.getInput('env_file');
-            core.info(`Using ${envFile} to load variables`);
-            if (!(0, file_1.checkIfFileExists)(envFile)) {
-                return;
-            }
-            const env = (0, file_1.loadEnv)(envFile);
-            if (!env) {
-                core.setFailed('Nothing loaded from the envFile');
-                return;
-            }
-            for (const [envVar, varValue] of Object.entries(env)) {
-                core.exportVariable(envVar, varValue);
-            }
+    try {
+        const envFile = core.getInput('env_file');
+        core.info(`Using ${envFile} to load variables`);
+        if (!(0, file_1.checkIfFileExists)(envFile))
+            return;
+        const env = (0, file_1.loadEnv)(envFile);
+        if (!env) {
+            core.setFailed('Nothing loaded from the envFile');
+            return;
         }
-        catch (error) {
-            if (error instanceof Error) {
-                core.setFailed(error.message);
-            }
-        }
-    });
+        for (const [envVar, varValue] of Object.entries(env))
+            core.exportVariable(envVar, varValue);
+    }
+    catch (error) {
+        if (error instanceof Error)
+            core.setFailed(error.message);
+    }
 }
 run();
 
