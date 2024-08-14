@@ -1,6 +1,6 @@
 {
   "name": "@rotki/action-env",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "private": true,
   "packageManager": "pnpm@9.7.0",
   "description": "Loads environment variables from a .env file",
