@@ -30,10 +30,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.loadEnv = exports.checkIfFileExists = void 0;
+exports.checkIfFileExists = checkIfFileExists;
+exports.loadEnv = loadEnv;
 const fs = __importStar(__nccwpck_require__(7561));
 const core = __importStar(__nccwpck_require__(9093));
-const dotenv_1 = __nccwpck_require__(3817);
+const dotenv_1 = __nccwpck_require__(3496);
 function checkIfFileExists(filePath) {
     if (!fs.existsSync(filePath)) {
         core.setFailed('Invalid path');
@@ -41,12 +42,10 @@ function checkIfFileExists(filePath) {
     }
     return true;
 }
-exports.checkIfFileExists = checkIfFileExists;
 function loadEnv(filePath) {
     const output = (0, dotenv_1.config)({ path: filePath });
-    return output.parsed;
+    return output.parsed && Object.keys(output.parsed).length > 0 ? output.parsed : undefined;
 }
-exports.loadEnv = loadEnv;
 
 
 /***/ }),
@@ -1939,14 +1938,14 @@ function isLoopbackAddress(host) {
 
 /***/ }),
 
-/***/ 3817:
+/***/ 3496:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const fs = __nccwpck_require__(7147)
 const path = __nccwpck_require__(1017)
 const os = __nccwpck_require__(2037)
 const crypto = __nccwpck_require__(6113)
-const packageJson = __nccwpck_require__(649)
+const packageJson = __nccwpck_require__(5319)
 
 const version = packageJson.version
 
@@ -2003,7 +2002,7 @@ function _parseVault (options) {
   }
 
   // handle scenario for comma separated keys - for use with key rotation
-  // example: DOTENV_KEY="dotenv://:key_1234@dotenv.org/vault/.env.vault?environment=prod,dotenv://:key_7890@dotenv.org/vault/.env.vault?environment=prod"
+  // example: DOTENV_KEY="dotenv://:key_1234@dotenvx.com/vault/.env.vault?environment=prod,dotenv://:key_7890@dotenvx.com/vault/.env.vault?environment=prod"
   const keys = _dotenvKey(options).split(',')
   const length = keys.length
 
@@ -2067,7 +2066,7 @@ function _instructions (result, dotenvKey) {
     uri = new URL(dotenvKey)
   } catch (error) {
     if (error.code === 'ERR_INVALID_URL') {
-      const err = new Error('INVALID_DOTENV_KEY: Wrong format. Must be in valid uri format like dotenv://:key_1234@dotenv.org/vault/.env.vault?environment=development')
+      const err = new Error('INVALID_DOTENV_KEY: Wrong format. Must be in valid uri format like dotenv://:key_1234@dotenvx.com/vault/.env.vault?environment=development')
       err.code = 'INVALID_DOTENV_KEY'
       throw err
     }
@@ -2147,52 +2146,59 @@ function _configVault (options) {
 }
 
 function configDotenv (options) {
-  let dotenvPath = path.resolve(process.cwd(), '.env')
+  const dotenvPath = path.resolve(process.cwd(), '.env')
   let encoding = 'utf8'
   const debug = Boolean(options && options.debug)
 
-  if (options) {
-    if (options.path != null) {
-      let envPath = options.path
-
-      if (Array.isArray(envPath)) {
-        for (const filepath of options.path) {
-          if (fs.existsSync(filepath)) {
-            envPath = filepath
-            break
-          }
-        }
-      }
-
-      dotenvPath = _resolveHome(envPath)
+  if (options && options.encoding) {
+    encoding = options.encoding
+  } else {
+    if (debug) {
+      _debug('No encoding is specified. UTF-8 is used by default')
     }
-    if (options.encoding != null) {
-      encoding = options.encoding
+  }
+
+  let optionPaths = [dotenvPath] // default, look for .env
+  if (options && options.path) {
+    if (!Array.isArray(options.path)) {
+      optionPaths = [_resolveHome(options.path)]
     } else {
-      if (debug) {
-        _debug('No encoding is specified. UTF-8 is used by default')
+      optionPaths = [] // reset default
+      for (const filepath of options.path) {
+        optionPaths.push(_resolveHome(filepath))
       }
     }
   }
 
-  try {
-    // Specifying an encoding returns a string instead of a buffer
-    const parsed = DotenvModule.parse(fs.readFileSync(dotenvPath, { encoding }))
+  // Build the parsed data in a temporary object (because we need to return it).  Once we have the final
+  // parsed data, we will combine it with process.env (or options.processEnv if provided).
+  let lastError
+  const parsedAll = {}
+  for (const path of optionPaths) {
+    try {
+      // Specifying an encoding returns a string instead of a buffer
+      const parsed = DotenvModule.parse(fs.readFileSync(path, { encoding }))
 
-    let processEnv = process.env
-    if (options && options.processEnv != null) {
-      processEnv = options.processEnv
+      DotenvModule.populate(parsedAll, parsed, options)
+    } catch (e) {
+      if (debug) {
+        _debug(`Failed to load ${path} ${e.message}`)
+      }
+      lastError = e
     }
+  }
 
-    DotenvModule.populate(processEnv, parsed, options)
+  let processEnv = process.env
+  if (options && options.processEnv != null) {
+    processEnv = options.processEnv
+  }
 
-    return { parsed }
-  } catch (e) {
-    if (debug) {
-      _debug(`Failed to load ${dotenvPath} ${e.message}`)
-    }
+  DotenvModule.populate(processEnv, parsedAll, options)
 
-    return { error: e }
+  if (lastError) {
+    return { parsed: parsedAll, error: lastError }
+  } else {
+    return { parsed: parsedAll }
   }
 }
 
@@ -26565,11 +26571,11 @@ module.exports = parseParams
 
 /***/ }),
 
-/***/ 649:
+/***/ 5319:
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"name":"dotenv","version":"16.4.1","description":"Loads environment variables from .env file","main":"lib/main.js","types":"lib/main.d.ts","exports":{".":{"types":"./lib/main.d.ts","require":"./lib/main.js","default":"./lib/main.js"},"./config":"./config.js","./config.js":"./config.js","./lib/env-options":"./lib/env-options.js","./lib/env-options.js":"./lib/env-options.js","./lib/cli-options":"./lib/cli-options.js","./lib/cli-options.js":"./lib/cli-options.js","./package.json":"./package.json"},"scripts":{"dts-check":"tsc --project tests/types/tsconfig.json","lint":"standard","lint-readme":"standard-markdown","pretest":"npm run lint && npm run dts-check","test":"tap tests/*.js --100 -Rspec","prerelease":"npm test","release":"standard-version"},"repository":{"type":"git","url":"git://github.com/motdotla/dotenv.git"},"funding":"https://github.com/motdotla/dotenv?sponsor=1","keywords":["dotenv","env",".env","environment","variables","config","settings"],"readmeFilename":"README.md","license":"BSD-2-Clause","devDependencies":{"@definitelytyped/dtslint":"^0.0.133","@types/node":"^18.11.3","decache":"^4.6.1","sinon":"^14.0.1","standard":"^17.0.0","standard-markdown":"^7.1.0","standard-version":"^9.5.0","tap":"^16.3.0","tar":"^6.1.11","typescript":"^4.8.4"},"engines":{"node":">=12"},"browser":{"fs":false}}');
+module.exports = JSON.parse('{"name":"dotenv","version":"16.4.5","description":"Loads environment variables from .env file","main":"lib/main.js","types":"lib/main.d.ts","exports":{".":{"types":"./lib/main.d.ts","require":"./lib/main.js","default":"./lib/main.js"},"./config":"./config.js","./config.js":"./config.js","./lib/env-options":"./lib/env-options.js","./lib/env-options.js":"./lib/env-options.js","./lib/cli-options":"./lib/cli-options.js","./lib/cli-options.js":"./lib/cli-options.js","./package.json":"./package.json"},"scripts":{"dts-check":"tsc --project tests/types/tsconfig.json","lint":"standard","lint-readme":"standard-markdown","pretest":"npm run lint && npm run dts-check","test":"tap tests/*.js --100 -Rspec","test:coverage":"tap --coverage-report=lcov","prerelease":"npm test","release":"standard-version"},"repository":{"type":"git","url":"git://github.com/motdotla/dotenv.git"},"funding":"https://dotenvx.com","keywords":["dotenv","env",".env","environment","variables","config","settings"],"readmeFilename":"README.md","license":"BSD-2-Clause","devDependencies":{"@definitelytyped/dtslint":"^0.0.133","@types/node":"^18.11.3","decache":"^4.6.1","sinon":"^14.0.1","standard":"^17.0.0","standard-markdown":"^7.1.0","standard-version":"^9.5.0","tap":"^16.3.0","tar":"^6.1.11","typescript":"^4.8.4"},"engines":{"node":">=12"},"browser":{"fs":false}}');
 
 /***/ })
 

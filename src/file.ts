@@ -12,5 +12,5 @@ export function checkIfFileExists(filePath: string): boolean {
 
 export function loadEnv(filePath: string): Record<string, string> | undefined {
   const output = config({ path: filePath });
-  return output.parsed;
+  return output.parsed && Object.keys(output.parsed).length > 0 ? output.parsed : undefined;
 }
