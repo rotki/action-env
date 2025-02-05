@@ -2,7 +2,7 @@
   "name": "@rotki/action-env",
   "version": "2.0.2",
   "private": true,
-  "packageManager": "pnpm@9.15.0",
+  "packageManager": "pnpm@9.15.5",
   "description": "Loads environment variables from a .env file",
   "keywords": [
     "actions",
@@ -20,7 +20,7 @@
     "build": "tsc -p tsconfig.build.json",
     "lint": "eslint .",
     "package": "ncc build --source-map --license licenses.txt",
-    "test": "vitest",
+    "test": "vitest run",
     "all": "npm run build && npm run lint && npm run package && npm test",
     "preinstall": "npx only-allow pnpm",
     "release": "bumpp --no-push"
@@ -30,17 +30,17 @@
     "dotenv": "16.4.7"
   },
   "devDependencies": {
-    "@rotki/eslint-config": "3.6.0",
+    "@rotki/eslint-config": "3.7.0",
     "@tsconfig/node20": "20.1.4",
-    "@types/node": "20.17.10",
+    "@types/node": "20.17.17",
     "@vercel/ncc": "0.38.3",
-    "bumpp": "9.9.1",
-    "eslint": "9.16.0",
-    "eslint-plugin-github": "5.1.4",
+    "bumpp": "10.0.2",
+    "eslint": "9.19.0",
+    "eslint-plugin-github": "5.1.8",
     "js-yaml": "4.1.0",
     "prettier": "3.4.2",
-    "typescript": "5.7.2",
-    "vitest": "2.1.8"
+    "typescript": "5.7.3",
+    "vitest": "3.0.5"
   },
   "engines": {
     "node": ">=20 <21",
