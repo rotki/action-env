@@ -1,6 +1,6 @@
-import * as process from 'node:process';
 import * as cp from 'node:child_process';
 import * as path from 'node:path';
+import * as process from 'node:process';
 import { expect, it } from 'vitest';
 import { loadEnv } from '../src/file';
 
