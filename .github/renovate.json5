@@ -4,8 +4,10 @@
     "config:recommended",
     ":dependencyDashboard",
     ":dependencyDashboardApproval",
+    ":pinAllExceptPeerDependencies",
     "helpers:pinGitHubActionDigests"
   ],
+  "minimumReleaseAge": "7 days",
   "packageRules": [
     {
       "allowedVersions": "/^(24)\\./",
