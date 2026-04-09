@@ -17,7 +17,7 @@ describe('action-env', () => {
   it('test runs', () => {
     process.env.INPUT_ENV_FILE = '.github/.env';
     const np = process.execPath;
-    const ip = path.join(__dirname, '..', 'lib', 'main.js');
+    const ip = path.join(import.meta.dirname, '..', 'dist', 'index.js');
     const options: cp.ExecFileSyncOptions = {
       env: process.env,
     };
