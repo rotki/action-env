@@ -1,7 +1,7 @@
 import * as core from '@actions/core';
 import { checkIfFileExists, loadEnv } from './file';
 
-function run(): void {
+export function run(): void {
   try {
     const envFile: string = core.getInput('env_file');
     core.info(`Using ${envFile} to load variables`);
@@ -23,5 +23,3 @@ function run(): void {
       core.setFailed(error.message);
   }
 }
-
-run();

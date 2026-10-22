@@ -1,6 +1,9 @@
 name: '@rotki/action-env'
 description: Loads environment variables for a job from a file
 author: Rotki Solutions GmbH
+branding:
+  icon: file-text
+  color: green
 inputs:
   env_file:
     required: true
