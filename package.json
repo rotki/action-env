@@ -26,8 +26,7 @@
     "release": "bumpp --no-push"
   },
   "dependencies": {
-    "@actions/core": "3.0.1",
-    "dotenv": "17.4.2"
+    "@actions/core": "3.0.1"
   },
   "devDependencies": {
     "@commitlint/cli": "21.2.3",

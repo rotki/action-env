@@ -1,6 +1,6 @@
 import * as fs from 'node:fs';
+import { parseEnv } from 'node:util';
 import * as core from '@actions/core';
-import { config } from 'dotenv';
 
 export function checkIfFileExists(filePath: string): boolean {
   if (!fs.existsSync(filePath)) {
@@ -10,7 +10,9 @@ export function checkIfFileExists(filePath: string): boolean {
   return true;
 }
 
-export function loadEnv(filePath: string): Record<string, string> | undefined {
-  const output = config({ path: filePath });
-  return output.parsed && Object.keys(output.parsed).length > 0 ? output.parsed : undefined;
+export function loadEnv(filePath: string): Record<string, string | undefined> | undefined {
+  if (!fs.existsSync(filePath))
+    return undefined;
+  const parsed = parseEnv(fs.readFileSync(filePath, 'utf8'));
+  return Object.keys(parsed).length > 0 ? parsed : undefined;
 }

@@ -5,6 +5,7 @@
     "rootDir": "./src",
     "module": "ES2022",
     "moduleResolution": "Bundler",
+    "types": ["node"],
     "strict": true,
     "noImplicitAny": true,
     "declaration": false,
