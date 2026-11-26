@@ -60,6 +60,9 @@ pnpm run all
 Commit the rebuilt `dist/` with your change; the `Check dist/` workflow fails when it is out of
 date.
 
+Maintainers and coding agents should also read [AGENTS.md](./AGENTS.md), which covers dependency
+updates, workflow checks and releases.
+
 ## License
 
 [AGPL-3.0](./LICENSE) License &copy; 2022- [Rotki Solutions GmbH](https://github.com/rotki)
